@@ -4,7 +4,7 @@ Real-time pose estimation web application built with React 19, Vite 7, and Media
 
 ## 👨🏻‍💻 Live Demo
 
-Coming soon...
+[sumitsahoo.github.io/mediapipe-pose-estimation](https://sumitsahoo.github.io/mediapipe-pose-estimation)
 
 ## 🚀 Features
 
@@ -52,8 +52,8 @@ src/
 
 ```bash
 # Clone the repository
-git clone https://github.com/sumitsahoo/mediapipe-pose.git
-cd mediapipe-pose
+git clone https://github.com/sumitsahoo/mediapipe-pose-estimation.git
+cd mediapipe-pose-estimation
 
 # Install dependencies
 npm install
