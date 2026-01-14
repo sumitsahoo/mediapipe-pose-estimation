@@ -1,0 +1,180 @@
+@import "tailwindcss";
+
+@plugin "daisyui";
+
+/* Primary: #4db8a8, Secondary: #7bc96f - Modern teal/green palette */
+
+@plugin "daisyui/theme" {
+	name: "customtheme";
+	default: true;
+	prefersdark: false;
+	color-scheme: light;
+
+	--color-base-100: #ffffff;
+	--color-base-200: #f8fafa;
+	--color-base-300: #e8f0ef;
+	--color-base-content: #2d5550;
+	--color-primary: #4db8a8;
+	--color-primary-content: #ffffff;
+	--color-secondary: #7bc96f;
+	--color-secondary-content: #ffffff;
+	--color-accent: #26baa4;
+	--color-accent-content: #ffffff;
+	--color-neutral: #3d4451;
+	--color-neutral-content: #ffffff;
+	--color-info: #2094f3;
+	--color-info-content: #ffffff;
+	--color-success: #009485;
+	--color-success-content: #ffffff;
+	--color-warning: #ff9900;
+	--color-warning-content: #ffffff;
+	--color-error: #ff5724;
+	--color-error-content: #ffffff;
+
+	--radius-selector: 1rem;
+	--radius-field: 0.25rem;
+	--radius-box: 0.5rem;
+	--size-selector: 0.25rem;
+	--size-field: 0.25rem;
+	--border: 1px;
+	--depth: 1;
+	--noise: 0;
+}
+
+/* Dark theme - beautiful dark mode with glowing accents */
+@plugin "daisyui/theme" {
+	name: "customtheme-dark";
+	default: false;
+	prefersdark: true;
+	color-scheme: dark;
+
+	--color-base-100: #0f1419;
+	--color-base-200: #1a2229;
+	--color-base-300: #242d35;
+	--color-base-content: #e8f4f2;
+	--color-primary: #5dd4c0;
+	--color-primary-content: #0f1419;
+	--color-secondary: #8de67c;
+	--color-secondary-content: #0f1419;
+	--color-accent: #3dd9c1;
+	--color-accent-content: #0f1419;
+	--color-neutral: #2a3441;
+	--color-neutral-content: #e8f4f2;
+	--color-info: #4db3ff;
+	--color-info-content: #0f1419;
+	--color-success: #00c9b7;
+	--color-success-content: #0f1419;
+	--color-warning: #ffad33;
+	--color-warning-content: #0f1419;
+	--color-error: #ff6b47;
+	--color-error-content: #ffffff;
+}
+
+/*
+  Border color compatibility styles for Tailwind CSS v4
+*/
+@layer base {
+	*,
+	::after,
+	::before,
+	::backdrop,
+	::file-selector-button {
+		border-color: var(--color-gray-200, currentColor);
+	}
+
+	/* Prevent scrolling on the entire page */
+	html,
+	body {
+		overflow: hidden;
+		height: 100dvh;
+		margin: 0;
+		padding: 0;
+	}
+
+	#root {
+		height: 100dvh;
+		overflow: hidden;
+	}
+}
+
+/* Pose detection pulse animation for active detection */
+@utility animate-pulse-detection {
+	animation: pulse-detection 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+	will-change: transform, opacity;
+}
+
+@keyframes pulse-detection {
+	0%,
+	100% {
+		opacity: 1;
+		transform: scale(1);
+	}
+	50% {
+		opacity: 0.7;
+		transform: scale(1.02);
+	}
+}
+
+/* Floating particle animation */
+@utility animate-float {
+	animation: float linear infinite;
+	will-change: transform, opacity;
+}
+
+@keyframes float {
+	0% {
+		transform: translateY(0) translateX(0);
+		opacity: 0;
+	}
+	10% {
+		opacity: 0.8;
+	}
+	90% {
+		opacity: 0.8;
+	}
+	100% {
+		transform: translateY(-100vh) translateX(20px);
+		opacity: 0;
+	}
+}
+
+/* Slow pulse for connection lines */
+@utility animate-pulse-slow {
+	animation: pulse-slow 4s ease-in-out infinite;
+}
+
+@keyframes pulse-slow {
+	0%,
+	100% {
+		opacity: 0.2;
+	}
+	50% {
+		opacity: 0.4;
+	}
+}
+
+/* Glow effect for active elements */
+@utility glow-primary {
+	box-shadow: 0 0 20px 4px var(--color-primary);
+}
+
+/* Skeleton loading animation */
+@utility animate-skeleton {
+	animation: skeleton 1.5s ease-in-out infinite;
+	background: linear-gradient(
+		90deg,
+		var(--color-base-300) 25%,
+		var(--color-base-200) 50%,
+		var(--color-base-300) 75%
+	);
+	background-size: 200% 100%;
+}
+
+@keyframes skeleton {
+	0% {
+		background-position: 200% 0;
+	}
+	100% {
+		background-position: -200% 0;
+	}
+}
