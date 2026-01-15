@@ -19,12 +19,12 @@ export const WASM_CDN_URL = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-visio
 
 /**
  * Canvas 2D context options optimized for frequent reading
+ * Note: desynchronized disabled for Android compatibility
  * @constant {Object}
  */
 export const CANVAS_CONTEXT_OPTIONS = {
 	willReadFrequently: true,
 	alpha: true,
-	desynchronized: true,
 };
 
 /**

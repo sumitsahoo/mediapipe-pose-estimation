@@ -119,7 +119,7 @@ const FaceMesh = ({ faceLandmarks, emotion, videoRef, isDetecting }) => {
 
 	if (!isDetecting) return null;
 
-	return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full object-cover z-26 pointer-events-none" />;
+	return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full object-cover z-[26] pointer-events-none" />;
 };
 
 export default memo(FaceMesh);

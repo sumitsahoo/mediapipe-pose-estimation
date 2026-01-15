@@ -45,24 +45,27 @@ const PoseDetector = () => {
 				/>
 
 				{/* Canvas overlay for pose visualization */}
-				<canvas
-					ref={canvasRef}
-					className="absolute inset-0 w-full h-full object-cover z-25 pointer-events-none"
-					style={{
-						transform: "scaleX(1)",
-						objectFit: "cover",
-					}}
-				/>
+				<canvas ref={canvasRef} className="absolute inset-0 w-full h-full object-cover z-[25] pointer-events-none" />
 
 				{/* Face mesh overlay */}
 				<FaceMesh faceLandmarks={faceLandmarks} emotion={emotion} videoRef={videoRef} isDetecting={isDetecting} />
 			</div>
 
-			{/* Status Indicator */}
-			<StatusIndicator isDetecting={isDetecting} landmarksDetected={landmarksDetected} />
-
-			{/* Emotion Indicator */}
-			<EmotionIndicator emotion={emotion} isDetecting={isDetecting} faceDetected={!!faceLandmarks} />
+			{/* Top Indicators Bar */}
+			{isDetecting && (
+				<div className="absolute top-4 left-0 right-0 z-30 px-4 safe-area-inset-top">
+					<div className="flex items-start justify-between gap-3">
+						{/* Status Indicator - left side */}
+						<div className="flex-shrink-0">
+							<StatusIndicator isDetecting={isDetecting} landmarksDetected={landmarksDetected} />
+						</div>
+						{/* Emotion Indicator - right side */}
+						<div className="flex-shrink-0">
+							<EmotionIndicator emotion={emotion} isDetecting={isDetecting} faceDetected={!!faceLandmarks} />
+						</div>
+					</div>
+				</div>
+			)}
 
 			{/* Detection Glow Effect */}
 			{isDetecting && landmarksDetected && (
