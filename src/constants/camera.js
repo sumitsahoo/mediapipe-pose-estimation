@@ -13,30 +13,31 @@ export const FACING_MODE = {
 };
 
 /**
- * Camera resolution settings for mobile devices
+ * Default camera resolution settings (shared between mobile and desktop)
  * @constant {Object}
  */
-export const MOBILE_CAMERA_SETTINGS = {
+const DEFAULT_RESOLUTION = {
     height: { ideal: 720 },
     width: { ideal: 1280 },
 };
 
 /**
+ * Camera resolution settings for mobile devices
+ * @constant {Object}
+ */
+export const MOBILE_CAMERA_SETTINGS = DEFAULT_RESOLUTION;
+
+/**
  * Camera resolution settings for desktop devices
  * @constant {Object}
  */
-export const DESKTOP_CAMERA_SETTINGS = {
-    height: { ideal: 720 },
-    width: { ideal: 1280 },
-};
+export const DESKTOP_CAMERA_SETTINGS = DEFAULT_RESOLUTION;
 
 /**
  * Camera constraint defaults
  * @constant {Object}
  */
 export const CAMERA_DEFAULTS = {
-    aspectRatio: undefined,
-    resizeMode: false,
     focusMode: "continuous",
     focusDistance: 0,
     exposureMode: "continuous",

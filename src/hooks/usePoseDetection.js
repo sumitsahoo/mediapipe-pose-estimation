@@ -18,19 +18,22 @@ import {
 } from "../constants/pose";
 import { getMediaConstraints, stopAllTracks } from "../utils/poseHelpers";
 
+/** Initial detection state */
+const INITIAL_STATE = {
+    isDetecting: false,
+    facingMode: "user",
+    isLoading: false,
+    error: null,
+    landmarksDetected: false,
+};
+
 /**
  * Custom hook for pose detection logic and camera state management
  * @returns {Object} Detection state and control functions
  */
 export const usePoseDetection = () => {
     // Detection state
-    const [detectionState, setDetectionState] = useState({
-        isDetecting: false,
-        facingMode: "user",
-        isLoading: false,
-        error: null,
-        landmarksDetected: false,
-    });
+    const [detectionState, setDetectionState] = useState(INITIAL_STATE);
 
     // Refs for DOM elements
     const videoRef = useRef(null);
@@ -72,25 +75,21 @@ export const usePoseDetection = () => {
      * Draw pose landmarks and connections on canvas
      */
     const drawPose = useCallback((landmarks, ctx, width, height) => {
-        if (!landmarks || landmarks.length === 0) return;
+        if (!landmarks?.length) return;
 
         ctx.clearRect(0, 0, width, height);
+        const { connectionColor, connectionWidth, landmarkColor, landmarkRadius, confidenceThreshold } = DRAWING_STYLES;
 
         // Draw connections (skeleton lines)
-        ctx.strokeStyle = DRAWING_STYLES.connectionColor;
-        ctx.lineWidth = DRAWING_STYLES.connectionWidth;
+        ctx.strokeStyle = connectionColor;
+        ctx.lineWidth = connectionWidth;
         ctx.lineCap = "round";
 
         for (const [startIdx, endIdx] of POSE_CONNECTIONS) {
             const start = landmarks[startIdx];
             const end = landmarks[endIdx];
 
-            if (
-                start &&
-                end &&
-                start.visibility > DRAWING_STYLES.confidenceThreshold &&
-                end.visibility > DRAWING_STYLES.confidenceThreshold
-            ) {
+            if (start?.visibility > confidenceThreshold && end?.visibility > confidenceThreshold) {
                 ctx.beginPath();
                 ctx.moveTo(start.x * width, start.y * height);
                 ctx.lineTo(end.x * width, end.y * height);
@@ -99,17 +98,11 @@ export const usePoseDetection = () => {
         }
 
         // Draw landmarks (joint points)
-        ctx.fillStyle = DRAWING_STYLES.landmarkColor;
+        ctx.fillStyle = landmarkColor;
         for (const landmark of landmarks) {
-            if (landmark.visibility > DRAWING_STYLES.confidenceThreshold) {
+            if (landmark.visibility > confidenceThreshold) {
                 ctx.beginPath();
-                ctx.arc(
-                    landmark.x * width,
-                    landmark.y * height,
-                    DRAWING_STYLES.landmarkRadius,
-                    0,
-                    2 * Math.PI
-                );
+                ctx.arc(landmark.x * width, landmark.y * height, landmarkRadius, 0, 2 * Math.PI);
                 ctx.fill();
             }
         }
@@ -120,38 +113,32 @@ export const usePoseDetection = () => {
      */
     const detectPose = useCallback(
         async (currentSession) => {
-            if (
-                !poseLandmarkerRef.current ||
-                !videoRef.current ||
-                !canvasRef.current ||
-                currentSession !== detectSessionRef.current
-            ) {
-                return;
-            }
-
+            const poseLandmarker = poseLandmarkerRef.current;
             const video = videoRef.current;
             const canvas = canvasRef.current;
             const ctx = contextRef.current;
 
+            // Validate session and resources
+            if (!poseLandmarker || !video || !canvas || currentSession !== detectSessionRef.current) {
+                return;
+            }
+
+            // Wait for video to be ready
             if (video.readyState < 2 || !ctx) {
-                animationFrameId.current = requestAnimationFrame(() =>
-                    detectPose(currentSession)
-                );
+                animationFrameId.current = requestAnimationFrame(() => detectPose(currentSession));
                 return;
             }
 
             try {
-                const results = poseLandmarkerRef.current.detectForVideo(
-                    video,
-                    performance.now()
-                );
+                const results = poseLandmarker.detectForVideo(video, performance.now());
+                const landmarks = results.landmarks?.[0];
 
-                if (results.landmarks && results.landmarks.length > 0) {
-                    drawPose(results.landmarks[0], ctx, canvas.width, canvas.height);
-                    setDetectionState((prev) => ({ ...prev, landmarksDetected: true }));
+                if (landmarks?.length) {
+                    drawPose(landmarks, ctx, canvas.width, canvas.height);
+                    setDetectionState((prev) => prev.landmarksDetected ? prev : { ...prev, landmarksDetected: true });
                 } else {
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    setDetectionState((prev) => ({ ...prev, landmarksDetected: false }));
+                    setDetectionState((prev) => prev.landmarksDetected ? { ...prev, landmarksDetected: false } : prev);
                 }
             } catch (error) {
                 console.error("Detection error:", error);
@@ -160,9 +147,7 @@ export const usePoseDetection = () => {
             // Continue detection loop
             if (currentSession === detectSessionRef.current) {
                 setTimeout(() => {
-                    animationFrameId.current = requestAnimationFrame(() =>
-                        detectPose(currentSession)
-                    );
+                    animationFrameId.current = requestAnimationFrame(() => detectPose(currentSession));
                 }, DETECTION_INTERVAL_MS);
             }
         },

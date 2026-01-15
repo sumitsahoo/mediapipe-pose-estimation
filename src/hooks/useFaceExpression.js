@@ -6,7 +6,7 @@
  */
 
 import { FaceLandmarker, FilesetResolver } from "@mediapipe/tasks-vision";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { EMOTION_SMOOTHING, FACE_CONFIG, FACE_MODEL_URL } from "../constants/face";
 import { WASM_CDN_URL } from "../constants/pose";
 
@@ -14,7 +14,10 @@ import { WASM_CDN_URL } from "../constants/pose";
 const DETECTION_INTERVAL = 66;
 
 /** Initial delay before starting detection (ms) */
-const DETECTION_START_DELAY = 1000;
+const DETECTION_START_DELAY = 500;
+
+/** Initial emotion scores */
+const INITIAL_SCORES = { happy: 0, sad: 0, angry: 0, neutral: 0 };
 
 /**
  * Convert blendshapes array to Map for O(1) lookups
@@ -22,8 +25,9 @@ const DETECTION_START_DELAY = 1000;
  * @returns {Map} Map of blendshape name to score
  */
 const createBlendshapeMap = (blendshapes) => {
-    if (!blendshapes?.[0]?.categories) return new Map();
-    return new Map(blendshapes[0].categories.map(({ categoryName, score }) => [categoryName, score]));
+    const categories = blendshapes?.[0]?.categories;
+    if (!categories) return new Map();
+    return new Map(categories.map(({ categoryName, score }) => [categoryName, score]));
 };
 
 /**
@@ -129,42 +133,47 @@ export const useFaceExpression = (videoRef, isDetecting) => {
     const faceLandmarkerRef = useRef(null);
     const timeoutRef = useRef(null);
     const isActiveRef = useRef(false);
-    const emotionScoresRef = useRef({ happy: 0, sad: 0, angry: 0, neutral: 0 });
+    const emotionScoresRef = useRef({ ...INITIAL_SCORES });
+
+    /**
+     * Initialize FaceLandmarker
+     * Memoized to prevent recreation on re-renders
+     */
+    const initializeLandmarker = useCallback(async () => {
+        if (faceLandmarkerRef.current) return true;
+
+        try {
+            console.log("Initializing FaceLandmarker...");
+            const vision = await FilesetResolver.forVisionTasks(WASM_CDN_URL);
+
+            const landmarker = await FaceLandmarker.createFromOptions(vision, {
+                baseOptions: { modelAssetPath: FACE_MODEL_URL, delegate: "GPU" },
+                runningMode: "VIDEO",
+                ...FACE_CONFIG,
+            });
+
+            faceLandmarkerRef.current = landmarker;
+            setIsInitialized(true);
+            console.log("FaceLandmarker initialized successfully");
+            return true;
+        } catch (error) {
+            console.error("Failed to initialize FaceLandmarker:", error);
+            return false;
+        }
+    }, []);
 
     // Initialize FaceLandmarker on mount
     useEffect(() => {
         let cancelled = false;
 
         const init = async () => {
-            if (faceLandmarkerRef.current) return;
-
-            try {
-                console.log("Initializing FaceLandmarker...");
-                const vision = await FilesetResolver.forVisionTasks(WASM_CDN_URL);
-                if (cancelled) return;
-
-                const landmarker = await FaceLandmarker.createFromOptions(vision, {
-                    baseOptions: { modelAssetPath: FACE_MODEL_URL, delegate: "GPU" },
-                    runningMode: "VIDEO",
-                    ...FACE_CONFIG,
-                });
-
-                if (cancelled) {
-                    landmarker.close();
-                    return;
-                }
-
-                faceLandmarkerRef.current = landmarker;
-                setIsInitialized(true);
-                console.log("FaceLandmarker initialized successfully");
-            } catch (error) {
-                console.error("Failed to initialize FaceLandmarker:", error);
-            }
+            if (cancelled) return;
+            await initializeLandmarker();
         };
 
         init();
         return () => { cancelled = true; };
-    }, []);
+    }, [initializeLandmarker]);
 
     // Detection loop
     useEffect(() => {
@@ -173,7 +182,7 @@ export const useFaceExpression = (videoRef, isDetecting) => {
             isActiveRef.current = false;
             setEmotion(null);
             setFaceLandmarks(null);
-            emotionScoresRef.current = { happy: 0, sad: 0, angry: 0, neutral: 0 };
+            emotionScoresRef.current = { ...INITIAL_SCORES };
             return;
         }
 
@@ -181,18 +190,25 @@ export const useFaceExpression = (videoRef, isDetecting) => {
         console.log("Starting face expression detection loop");
 
         const detect = () => {
+            if (!isActiveRef.current) return;
+
             const video = videoRef.current;
             const landmarker = faceLandmarkerRef.current;
 
-            if (!isActiveRef.current || !landmarker || !video) return;
+            // Ensure all required resources are available
+            if (!landmarker || !video) {
+                scheduleNextDetection();
+                return;
+            }
 
-            // Only process if video has valid data
-            if (video.readyState >= 2 && video.videoWidth > 0) {
+            // Only process if video has valid data (readyState >= HAVE_CURRENT_DATA)
+            if (video.readyState >= 2 && video.videoWidth > 0 && video.videoHeight > 0) {
                 try {
                     const results = landmarker.detectForVideo(video, performance.now());
 
-                    // Update face landmarks
-                    setFaceLandmarks(results.faceLandmarks?.[0] || null);
+                    // Update face landmarks (null if no face detected)
+                    const landmarks = results.faceLandmarks?.[0] || null;
+                    setFaceLandmarks(landmarks);
 
                     // Analyze emotion from blendshapes
                     if (results.faceBlendshapes?.length) {
@@ -201,13 +217,19 @@ export const useFaceExpression = (videoRef, isDetecting) => {
                             emotionScoresRef.current = detected.scores;
                             setEmotion(detected);
                         }
+                    } else if (!landmarks) {
+                        // Reset emotion when face is lost
+                        setEmotion(null);
                     }
                 } catch (error) {
                     console.error("Face detection error:", error);
                 }
             }
 
-            // Schedule next frame
+            scheduleNextDetection();
+        };
+
+        const scheduleNextDetection = () => {
             if (isActiveRef.current) {
                 timeoutRef.current = setTimeout(detect, DETECTION_INTERVAL);
             }

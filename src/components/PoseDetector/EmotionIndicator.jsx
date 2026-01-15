@@ -1,6 +1,9 @@
 import { memo, useEffect, useState } from "react";
 import { EMOTIONS } from "../../constants/face";
 
+/** Transition duration for emotion animation (ms) */
+const ANIMATION_DURATION = 150;
+
 /**
  * Emotion indicator component
  * Displays detected facial expression as an animated emoji
@@ -24,7 +27,7 @@ const EmotionIndicator = ({ emotion, isDetecting, faceDetected }) => {
             const timeout = setTimeout(() => {
                 setDisplayedEmotion(emotion);
                 setIsAnimating(false);
-            }, 150);
+            }, ANIMATION_DURATION);
             return () => clearTimeout(timeout);
         }
 
@@ -45,6 +48,8 @@ const EmotionIndicator = ({ emotion, isDetecting, faceDetected }) => {
     const emotionData = emotionToShow?.type ? EMOTIONS[emotionToShow.type] : null;
     if (!emotionData) return null;
 
+    const { emoji, label, color } = emotionData;
+
     return (
         <div className="absolute top-6 right-6 z-30 animate-fade-in">
             <div
@@ -56,7 +61,7 @@ const EmotionIndicator = ({ emotion, isDetecting, faceDetected }) => {
                 style={{
                     background: "rgba(0, 0, 0, 0.5)",
                     backdropFilter: "blur(12px)",
-                    boxShadow: `0 0 20px ${emotionData.color}40`,
+                    boxShadow: `0 0 20px ${color}40`,
                 }}
             >
                 {/* Emoji */}
@@ -68,18 +73,18 @@ const EmotionIndicator = ({ emotion, isDetecting, faceDetected }) => {
                     `}
                     style={{
                         fontSize: "4rem",
-                        filter: `drop-shadow(0 0 12px ${emotionData.color}80)`,
+                        filter: `drop-shadow(0 0 12px ${color}80)`,
                     }}
                 >
-                    {emotionData.emoji}
+                    {emoji}
                 </span>
 
                 {/* Label */}
                 <span
                     className="text-[10px] font-semibold uppercase tracking-wider"
-                    style={{ color: emotionData.color }}
+                    style={{ color }}
                 >
-                    {emotionData.label}
+                    {label}
                 </span>
             </div>
         </div>
