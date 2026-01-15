@@ -51,10 +51,11 @@ const EmotionIndicator = ({ emotion, isDetecting, faceDetected }) => {
 	const { emoji, label, color } = emotionData;
 
 	return (
-		<div className="absolute top-6 right-6 z-30 animate-fade-in">
+		<div className="animate-fade-in">
 			<div
 				className={`
-                    flex flex-col items-center gap-1 p-3 rounded-2xl
+                    flex flex-col items-center justify-center gap-1 p-2 rounded-2xl
+                    min-w-[70px] md:min-w-[80px]
                     transition-all duration-300 ease-out
                     ${isAnimating ? "scale-90 opacity-70" : "scale-100 opacity-100"}
                 `}
@@ -67,12 +68,11 @@ const EmotionIndicator = ({ emotion, isDetecting, faceDetected }) => {
 				{/* Emoji */}
 				<span
 					className={`
-                        leading-none select-none block
+                        leading-none select-none block text-5xl md:text-6xl
                         transition-transform duration-300 ease-out
                         ${isAnimating ? "scale-50" : "scale-100"}
                     `}
 					style={{
-						fontSize: "4rem",
 						filter: `drop-shadow(0 0 12px ${color}80)`,
 					}}
 				>
@@ -80,7 +80,7 @@ const EmotionIndicator = ({ emotion, isDetecting, faceDetected }) => {
 				</span>
 
 				{/* Label */}
-				<span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color }}>
+				<span className="text-[9px] md:text-[10px] font-semibold uppercase tracking-wider" style={{ color }}>
 					{label}
 				</span>
 			</div>

@@ -58,11 +58,21 @@ const PoseDetector = () => {
 				<FaceMesh faceLandmarks={faceLandmarks} emotion={emotion} videoRef={videoRef} isDetecting={isDetecting} />
 			</div>
 
-			{/* Status Indicator */}
-			<StatusIndicator isDetecting={isDetecting} landmarksDetected={landmarksDetected} />
-
-			{/* Emotion Indicator */}
-			<EmotionIndicator emotion={emotion} isDetecting={isDetecting} faceDetected={!!faceLandmarks} />
+			{/* Top Indicators Bar */}
+			{isDetecting && (
+				<div className="absolute top-4 left-0 right-0 z-30 px-4 safe-area-inset-top">
+					<div className="flex items-start justify-between gap-3">
+						{/* Status Indicator - left side */}
+						<div className="flex-shrink-0">
+							<StatusIndicator isDetecting={isDetecting} landmarksDetected={landmarksDetected} />
+						</div>
+						{/* Emotion Indicator - right side */}
+						<div className="flex-shrink-0">
+							<EmotionIndicator emotion={emotion} isDetecting={isDetecting} faceDetected={!!faceLandmarks} />
+						</div>
+					</div>
+				</div>
+			)}
 
 			{/* Detection Glow Effect */}
 			{isDetecting && landmarksDetected && (
