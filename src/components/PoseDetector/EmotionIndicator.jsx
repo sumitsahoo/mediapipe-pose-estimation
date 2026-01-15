@@ -1,6 +1,9 @@
 import { memo, useEffect, useState } from "react";
 import { EMOTIONS } from "../../constants/face";
 
+/** Transition duration for emotion animation (ms) */
+const ANIMATION_DURATION = 150;
+
 /**
  * Emotion indicator component
  * Displays detected facial expression as an animated emoji
@@ -11,79 +14,78 @@ import { EMOTIONS } from "../../constants/face";
  * @param {boolean} props.faceDetected - Whether a face is currently detected
  */
 const EmotionIndicator = ({ emotion, isDetecting, faceDetected }) => {
-    const [displayedEmotion, setDisplayedEmotion] = useState(null);
-    const [isAnimating, setIsAnimating] = useState(false);
+	const [displayedEmotion, setDisplayedEmotion] = useState(null);
+	const [isAnimating, setIsAnimating] = useState(false);
 
-    // Handle emotion transitions with animation
-    useEffect(() => {
-        if (!emotion?.type || !faceDetected) return;
+	// Handle emotion transitions with animation
+	useEffect(() => {
+		if (!emotion?.type || !faceDetected) return;
 
-        // Animate if emotion type changed
-        if (displayedEmotion?.type !== emotion.type) {
-            setIsAnimating(true);
-            const timeout = setTimeout(() => {
-                setDisplayedEmotion(emotion);
-                setIsAnimating(false);
-            }, 150);
-            return () => clearTimeout(timeout);
-        }
+		// Animate if emotion type changed
+		if (displayedEmotion?.type !== emotion.type) {
+			setIsAnimating(true);
+			const timeout = setTimeout(() => {
+				setDisplayedEmotion(emotion);
+				setIsAnimating(false);
+			}, ANIMATION_DURATION);
+			return () => clearTimeout(timeout);
+		}
 
-        setDisplayedEmotion(emotion);
-    }, [emotion, displayedEmotion?.type, faceDetected]);
+		setDisplayedEmotion(emotion);
+	}, [emotion, displayedEmotion?.type, faceDetected]);
 
-    // Reset when detection stops or face is lost
-    useEffect(() => {
-        if (!isDetecting || !faceDetected) {
-            setDisplayedEmotion(null);
-        }
-    }, [isDetecting, faceDetected]);
+	// Reset when detection stops or face is lost
+	useEffect(() => {
+		if (!isDetecting || !faceDetected) {
+			setDisplayedEmotion(null);
+		}
+	}, [isDetecting, faceDetected]);
 
-    // Early return if nothing to show
-    if (!isDetecting || !faceDetected) return null;
+	// Early return if nothing to show
+	if (!isDetecting || !faceDetected) return null;
 
-    const emotionToShow = displayedEmotion || emotion;
-    const emotionData = emotionToShow?.type ? EMOTIONS[emotionToShow.type] : null;
-    if (!emotionData) return null;
+	const emotionToShow = displayedEmotion || emotion;
+	const emotionData = emotionToShow?.type ? EMOTIONS[emotionToShow.type] : null;
+	if (!emotionData) return null;
 
-    return (
-        <div className="absolute top-6 right-6 z-30 animate-fade-in">
-            <div
-                className={`
+	const { emoji, label, color } = emotionData;
+
+	return (
+		<div className="absolute top-6 right-6 z-30 animate-fade-in">
+			<div
+				className={`
                     flex flex-col items-center gap-1 p-3 rounded-2xl
                     transition-all duration-300 ease-out
                     ${isAnimating ? "scale-90 opacity-70" : "scale-100 opacity-100"}
                 `}
-                style={{
-                    background: "rgba(0, 0, 0, 0.5)",
-                    backdropFilter: "blur(12px)",
-                    boxShadow: `0 0 20px ${emotionData.color}40`,
-                }}
-            >
-                {/* Emoji */}
-                <span
-                    className={`
+				style={{
+					background: "rgba(0, 0, 0, 0.5)",
+					backdropFilter: "blur(12px)",
+					boxShadow: `0 0 20px ${color}40`,
+				}}
+			>
+				{/* Emoji */}
+				<span
+					className={`
                         leading-none select-none block
                         transition-transform duration-300 ease-out
                         ${isAnimating ? "scale-50" : "scale-100"}
                     `}
-                    style={{
-                        fontSize: "4rem",
-                        filter: `drop-shadow(0 0 12px ${emotionData.color}80)`,
-                    }}
-                >
-                    {emotionData.emoji}
-                </span>
+					style={{
+						fontSize: "4rem",
+						filter: `drop-shadow(0 0 12px ${color}80)`,
+					}}
+				>
+					{emoji}
+				</span>
 
-                {/* Label */}
-                <span
-                    className="text-[10px] font-semibold uppercase tracking-wider"
-                    style={{ color: emotionData.color }}
-                >
-                    {emotionData.label}
-                </span>
-            </div>
-        </div>
-    );
+				{/* Label */}
+				<span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color }}>
+					{label}
+				</span>
+			</div>
+		</div>
+	);
 };
 
 export default memo(EmotionIndicator);

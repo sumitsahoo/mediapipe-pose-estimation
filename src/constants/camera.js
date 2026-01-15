@@ -8,39 +8,40 @@
  * @constant {Object}
  */
 export const FACING_MODE = {
-    ENVIRONMENT: "environment",
-    USER: "user",
+	ENVIRONMENT: "environment",
+	USER: "user",
+};
+
+/**
+ * Default camera resolution settings (shared between mobile and desktop)
+ * @constant {Object}
+ */
+const DEFAULT_RESOLUTION = {
+	height: { ideal: 720 },
+	width: { ideal: 1280 },
 };
 
 /**
  * Camera resolution settings for mobile devices
  * @constant {Object}
  */
-export const MOBILE_CAMERA_SETTINGS = {
-    height: { ideal: 720 },
-    width: { ideal: 1280 },
-};
+export const MOBILE_CAMERA_SETTINGS = DEFAULT_RESOLUTION;
 
 /**
  * Camera resolution settings for desktop devices
  * @constant {Object}
  */
-export const DESKTOP_CAMERA_SETTINGS = {
-    height: { ideal: 720 },
-    width: { ideal: 1280 },
-};
+export const DESKTOP_CAMERA_SETTINGS = DEFAULT_RESOLUTION;
 
 /**
  * Camera constraint defaults
  * @constant {Object}
  */
 export const CAMERA_DEFAULTS = {
-    aspectRatio: undefined,
-    resizeMode: false,
-    focusMode: "continuous",
-    focusDistance: 0,
-    exposureMode: "continuous",
-    frameRate: { ideal: 30, max: 60 },
+	focusMode: "continuous",
+	focusDistance: 0,
+	exposureMode: "continuous",
+	frameRate: { ideal: 30, max: 60 },
 };
 
 /**
@@ -48,8 +49,8 @@ export const CAMERA_DEFAULTS = {
  * @constant {Object}
  */
 export const ZOOM_LEVELS = {
-    FRONT: 1,
-    BACK: 1,
+	FRONT: 1,
+	BACK: 1,
 };
 
 /**

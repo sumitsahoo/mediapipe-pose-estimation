@@ -13,9 +13,9 @@ import ErrorBoundary from "./components/ErrorBoundary.jsx";
 import "./main.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-    <React.StrictMode>
-        <ErrorBoundary>
-            <App />
-        </ErrorBoundary>
-    </React.StrictMode>
+	<React.StrictMode>
+		<ErrorBoundary>
+			<App />
+		</ErrorBoundary>
+	</React.StrictMode>,
 );
