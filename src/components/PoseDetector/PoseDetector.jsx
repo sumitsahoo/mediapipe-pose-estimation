@@ -1,5 +1,8 @@
+import { useFaceExpression } from "../../hooks/useFaceExpression";
 import { usePoseDetection } from "../../hooks/usePoseDetection";
 import { isPhone } from "../../utils/poseHelpers";
+import EmotionIndicator from "./EmotionIndicator";
+import FaceMesh from "./FaceMesh";
 import IconBody from "../icons/IconBody";
 import DetectorControls from "./DetectorControls";
 import StatusIndicator from "./StatusIndicator";
@@ -7,7 +10,7 @@ import StatusIndicator from "./StatusIndicator";
 /**
  * Main PoseDetector component
  * Provides real-time pose estimation using MediaPipe
- * Displays video feed with skeleton overlay
+ * Displays video feed with skeleton overlay and facial expression detection
  */
 const PoseDetector = () => {
     const {
@@ -18,6 +21,9 @@ const PoseDetector = () => {
         handleStopDetection,
         handleSwitchCamera,
     } = usePoseDetection();
+
+    // Face expression detection with landmarks
+    const { emotion, faceLandmarks } = useFaceExpression(videoRef, isDetecting);
 
     const isPhoneDevice = isPhone();
 
@@ -47,12 +53,27 @@ const PoseDetector = () => {
                         objectFit: "cover",
                     }}
                 />
+
+                {/* Face mesh overlay */}
+                <FaceMesh
+                    faceLandmarks={faceLandmarks}
+                    emotion={emotion}
+                    videoRef={videoRef}
+                    isDetecting={isDetecting}
+                />
             </div>
 
             {/* Status Indicator */}
             <StatusIndicator
                 isDetecting={isDetecting}
                 landmarksDetected={landmarksDetected}
+            />
+
+            {/* Emotion Indicator */}
+            <EmotionIndicator
+                emotion={emotion}
+                isDetecting={isDetecting}
+                faceDetected={!!faceLandmarks}
             />
 
             {/* Detection Glow Effect */}
