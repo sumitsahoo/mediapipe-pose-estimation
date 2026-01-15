@@ -1,6 +1,6 @@
 # 🧘 MediaPipe Pose Estimation
 
-Real-time pose estimation web application built with React 19, Vite 7, and MediaPipe. Detect 33 body landmarks with smooth skeleton visualization.
+Real-time pose estimation and facial expression detection web application built with React 19, Vite 7, and MediaPipe. Detect 33 body landmarks with smooth skeleton visualization and recognize emotions through facial analysis.
 
 ## 👨🏻‍💻 Live Demo
 
@@ -10,6 +10,8 @@ Real-time pose estimation web application built with React 19, Vite 7, and Media
 
 - **⚡️ Real-time Detection**: Smooth 30fps pose landmark detection using MediaPipe
 - **🎯 33 Body Landmarks**: Detects all major body joints including face, arms, torso, and legs
+- **😊 Facial Expression Detection**: Recognizes emotions (happy, sad, angry, neutral) with emoji display
+- **🎭 Face Mesh Visualization**: Real-time facial landmark overlay with glow effects
 - **📱 Responsive Design**: Works seamlessly on both mobile and desktop devices
 - **🔄 Camera Switching**: Toggle between front and back cameras on mobile
 - **🎨 Beautiful UI**: Modern, minimal design with smooth animations
@@ -21,30 +23,34 @@ Real-time pose estimation web application built with React 19, Vite 7, and Media
 ```
 src/
 ├── components/
-│   ├── PoseDetector/        # Main pose detection component
-│   │   ├── PoseDetector.jsx # Video feed and canvas overlay
+│   ├── PoseDetector/           # Main pose detection component
+│   │   ├── PoseDetector.jsx    # Video feed and canvas overlay
 │   │   ├── DetectorControls.jsx # Start/stop and camera controls
-│   │   └── StatusIndicator.jsx  # Detection status display
-│   ├── icons/               # SVG icon components
-│   ├── ErrorBoundary.jsx    # Error handling wrapper
-│   └── Particles.jsx        # Animated background
+│   │   ├── StatusIndicator.jsx # Detection status display
+│   │   ├── EmotionIndicator.jsx # Facial emotion emoji display
+│   │   └── FaceMesh.jsx        # Face landmark visualization
+│   ├── icons/                  # SVG icon components
+│   ├── ErrorBoundary.jsx       # Error handling wrapper
+│   └── Particles.jsx           # Animated background
 ├── hooks/
-│   └── usePoseDetection.js  # MediaPipe integration hook
+│   ├── usePoseDetection.js     # MediaPipe pose integration hook
+│   └── useFaceExpression.js    # MediaPipe face expression hook
 ├── constants/
-│   ├── camera.js            # Camera configuration
-│   └── pose.js              # Pose detection settings
+│   ├── camera.js               # Camera configuration
+│   ├── pose.js                 # Pose detection settings
+│   └── face.js                 # Face detection settings
 ├── utils/
-│   ├── poseHelpers.js       # Camera and device utilities
-│   └── frameBuster.js       # Security utility
-├── App.jsx                  # Root component
-├── main.jsx                 # Entry point
-└── main.css                 # Global styles & themes
+│   ├── poseHelpers.js          # Camera and device utilities
+│   └── frameBuster.js          # Security utility
+├── App.jsx                     # Root component
+├── main.jsx                    # Entry point
+└── main.css                    # Global styles & themes
 ```
 
 ## 🛠️ Tech Stack
 
 - **Core**: React 19, Vite 7
-- **AI/ML**: @mediapipe/tasks-vision
+- **AI/ML**: @mediapipe/tasks-vision (PoseLandmarker, FaceLandmarker)
 - **Styling**: Tailwind CSS 4, DaisyUI 5
 - **Tools**: Biome (lint & format)
 
@@ -70,11 +76,13 @@ npm run preview
 
 ## 🎮 How to Use
 
-1. **Start Detection**: Click the camera button to begin pose detection
-2. **Position Yourself**: Stand in view of the camera (full body works best)
+1. **Start Detection**: Click the camera button to begin pose and face detection
+2. **Position Yourself**: Stand in view of the camera (full body works best for pose)
 3. **View Skeleton**: Watch as your body landmarks are tracked in real-time
-4. **Switch Camera**: On mobile, use the rotate button to switch cameras
-5. **Stop Detection**: Click the stop button to end the session
+4. **See Your Emotion**: Your facial expression is analyzed and shown as an emoji (😊 😢 😠 😐)
+5. **Face Mesh**: Facial landmarks are visualized with glowing overlay effects
+6. **Switch Camera**: On mobile, use the rotate button to switch cameras
+7. **Stop Detection**: Click the stop button to end the session
 
 ## ⚙️ Configuration
 
@@ -112,6 +120,20 @@ export const DRAWING_STYLES = {
   landmarkRadius: 5,
   connectionColor: "#8de67c",
   connectionWidth: 3,
+};
+```
+
+### Face Detection Settings
+
+Customize face detection in `src/constants/face.js`:
+
+```javascript
+export const FACE_CONFIG = {
+  numFaces: 1,
+  minFaceDetectionConfidence: 0.5,
+  minFacePresenceConfidence: 0.5,
+  minTrackingConfidence: 0.5,
+  outputFaceBlendshapes: true,
 };
 ```
 
