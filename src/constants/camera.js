@@ -8,8 +8,8 @@
  * @constant {Object}
  */
 export const FACING_MODE = {
-    ENVIRONMENT: "environment",
-    USER: "user",
+	ENVIRONMENT: "environment",
+	USER: "user",
 };
 
 /**
@@ -17,8 +17,8 @@ export const FACING_MODE = {
  * @constant {Object}
  */
 const DEFAULT_RESOLUTION = {
-    height: { ideal: 720 },
-    width: { ideal: 1280 },
+	height: { ideal: 720 },
+	width: { ideal: 1280 },
 };
 
 /**
@@ -38,10 +38,10 @@ export const DESKTOP_CAMERA_SETTINGS = DEFAULT_RESOLUTION;
  * @constant {Object}
  */
 export const CAMERA_DEFAULTS = {
-    focusMode: "continuous",
-    focusDistance: 0,
-    exposureMode: "continuous",
-    frameRate: { ideal: 30, max: 60 },
+	focusMode: "continuous",
+	focusDistance: 0,
+	exposureMode: "continuous",
+	frameRate: { ideal: 30, max: 60 },
 };
 
 /**
@@ -49,8 +49,8 @@ export const CAMERA_DEFAULTS = {
  * @constant {Object}
  */
 export const ZOOM_LEVELS = {
-    FRONT: 1,
-    BACK: 1,
+	FRONT: 1,
+	BACK: 1,
 };
 
 /**
