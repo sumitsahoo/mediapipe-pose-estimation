@@ -45,14 +45,7 @@ const PoseDetector = () => {
 				/>
 
 				{/* Canvas overlay for pose visualization */}
-				<canvas
-					ref={canvasRef}
-					className="absolute inset-0 w-full h-full object-cover z-25 pointer-events-none"
-					style={{
-						transform: "scaleX(1)",
-						objectFit: "cover",
-					}}
-				/>
+				<canvas ref={canvasRef} className="absolute inset-0 w-full h-full object-cover z-[25] pointer-events-none" />
 
 				{/* Face mesh overlay */}
 				<FaceMesh faceLandmarks={faceLandmarks} emotion={emotion} videoRef={videoRef} isDetecting={isDetecting} />
