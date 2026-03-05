@@ -1,11 +1,12 @@
 <div align="center">
+
   <h1>🧘 MediaPipe Pose Estimation</h1>
   <p>Real-time pose estimation and facial expression detection web application built with React 19, Vite 7, and MediaPipe. Detect 33 body landmarks with smooth skeleton visualization and recognize emotions through facial analysis.</p>
 
   ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/sumitsahoo/mediapipe-pose-estimation/deploy.yml)
   ![GitHub deployments](https://img.shields.io/github/deployments/sumitsahoo/mediapipe-pose-estimation/github-pages)
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
+  
 </div>
 
 ## 👨🏻‍💻 Live Demo
