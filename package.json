@@ -1,6 +1,6 @@
 {
   "name": "mediapipe-pose-estimation",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": true,
   "description": "Real-time pose estimation using MediaPipe and React",
   "license": "MIT",
