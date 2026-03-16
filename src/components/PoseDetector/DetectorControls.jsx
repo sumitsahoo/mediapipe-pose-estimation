@@ -31,30 +31,27 @@ const DetectorControls = ({
 }) => (
   <div className="absolute bottom-8 left-0 right-0 flex justify-center items-center z-30 px-4">
     <div
-      className={`flex justify-center items-center gap-4 transition-all duration-300 rounded-full ${
+      className={`flex justify-center items-center transition-all duration-300 rounded-full ${
         isDetecting
-          ? "bg-black/50 border border-white/10 shadow-lg backdrop-blur-md px-5 py-3"
+          ? `bg-black/50 border border-white/10 shadow-lg backdrop-blur-md ${
+              shouldShowRotateButton ? "gap-4 px-5 py-3" : "p-3"
+            }`
           : "bg-transparent border-transparent"
       }`}
     >
-      {/* Switch Camera Button - only shows when detecting */}
-      <div
-        className={`transition-all duration-300 ease-in-out ${
-          shouldShowRotateButton ? "opacity-100 scale-100" : "opacity-0 scale-0 w-0 overflow-hidden"
-        }`}
-      >
+      {/* Switch Camera Button - only shows when detecting on mobile */}
+      {shouldShowRotateButton && (
         <div className="md:tooltip md:tooltip-top" data-tip="Switch Camera">
           <button
             type="button"
             className={SECONDARY_BTN_CLASS}
             onClick={onSwitchCamera}
             aria-label="Switch camera"
-            disabled={!shouldShowRotateButton}
           >
             <IconRotateCamera className="w-6 h-6" />
           </button>
         </div>
-      </div>
+      )}
 
       {/* Main Start/Stop Button */}
       <div
