@@ -24,11 +24,19 @@
     "@biomejs/biome": "^2.4.5",
     "@tailwindcss/postcss": "^4.2.1",
     "@tailwindcss/vite": "^4.2.1",
-    "@vitejs/plugin-react": "^5.1.4",
+    "@vitejs/plugin-react": "^6.0.1",
     "daisyui": "^5.5.19",
     "postcss": "^8.5.8",
     "tailwindcss": "^4.2.1",
-    "vite": "npm:rolldown-vite@latest",
+    "vite": "^8.0.0",
     "vite-plugin-pwa": "^1.2.0"
+  },
+  "overrides": {
+    "@tailwindcss/vite": {
+      "vite": "$vite"
+    },
+    "vite-plugin-pwa": {
+      "vite": "$vite"
+    }
   }
 }

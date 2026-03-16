@@ -117,9 +117,9 @@ export default defineConfig(({ mode }) => {
     build: {
       // Don't generate source maps for production to avoid warnings
       sourcemap: false,
-      rollupOptions: {
+      rolldownOptions: {
         output: {
-          advancedChunks: {
+          codeSplitting: {
             groups: [
               {
                 name: "react-vendor",
